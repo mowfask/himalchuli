@@ -18,4 +18,10 @@
 #define togglebit(byte, bit) ((byte) ^= ((1) << (bit)))
 #define testbit(byte, bit) (((byte) >> (bit)) & (1))    //returns 1 or 0
 
+#define setmask(byte, mask) ((byte) |= (mask))
+#define clearmask(byte, mask) ((byte) &= ~(mask))
+#define togglemask(byte, mask) ((byte ^= (mask))
+#define testmask(byte, mask) ((byte) & (mask) == 0 ? 0 : 1) //not elegant, but
+                                                            //returns 1 or 0
+
 #endif
