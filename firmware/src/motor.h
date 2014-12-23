@@ -47,4 +47,17 @@ void motor_left();
 void motor_right();
 void motor_stop();
 
+void motor_pwm_stop();
+/*Disable pwm output on OC1A and OC1B pins and set the output to sane values.
+ */
+
+ void motor_pwm_start(uint8_t direction, uint8_t duty);
+/*Set up pwm for the given direction (right: 0; left: non-0), with the given
+ *duty (min: 0; max:255).
+ */
+
+inline void motor_pwm_set(uint8_t duty);
+/*Change the pwm value, assuming motor_pwm_start() has been run before.
+ */
+
 #endif
