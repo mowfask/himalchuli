@@ -22,10 +22,22 @@ void motor_init()
     setbit(PORT_M2L, PM2L);     //Mosfet on
     clearbit(PORT_M2H, PM2H);   //Mosfet off
     M2_state = 0;
+
+    //Timer1 preparation
+    //We'll only use the low bits later
+    OCR1AH = 0;
+    OCR1BH = 0;
+
+    //The timer should start at 0, else we'll wait forever on the first run
+    TCNT1 = 0;
 }
 
 void M1_low()
 {
+    if(M1_state == 2)   //This shouldn't work in pwm mode
+    {
+        return;
+    }
     //Set upper connector to 0 volts
     //First: make sure it's not set to 12V
     clearbit(PORT_M1H, PM1H);
@@ -38,6 +50,10 @@ void M1_low()
 
 void M1_high()
 {
+    if(M1_state == 2)   //This shouldn't work in pwm mode
+    {
+        return;
+    }
     //Set upper connector to 12 volts
     //First: make sure it's not set to GND
     clearbit(PORT_M1L, PM1L);
@@ -63,6 +79,10 @@ void M1_toggle()
 
 void M2_low()
 {
+    if(M1_state == 2)   //This shouldn't work in pwm mode
+    {
+        return;
+    }
     //Set lower connector to 0 volts
     //First: make sure it's not set to 12V
     clearbit(PORT_M2H, PM2H);
@@ -75,6 +95,10 @@ void M2_low()
 
 void M2_high()
 {
+    if(M1_state == 2)   //This shouldn't work in pwm mode
+    {
+        return;
+    }
     //Set lower connector to 12 volts
     //First: make sure it's not set to GND
     clearbit(PORT_M2L, PM2L);
@@ -151,7 +175,13 @@ void motor_pwm_start(uint8_t direction, uint8_t duty)
     motor_pwm_stop();
     _delay_ms(40);
 
-    TCNT1 = duty;
+    //we just set both compare registers, so we don't have to worry
+    OCR1AL = duty;
+    OCR1BL = duty;
+
+    //Start the timer/counter by selecting the clock source (prescaler: 1)
+    clearmask(TCCR1B, CS12 | CS11);
+    setbit(TCCR1B, CS10);
 
     /*For enabling the actual pwm, from the datasheet:
      *Setting the COM1x1:0 bits to 2 will produce a non-inverted PWM and an
@@ -182,5 +212,7 @@ inline void motor_pwm_set(uint8_t duty)
 /*Change the pwm value, assuming motor_pwm_start() has been run before.
  */
 {
-    TCNT1 = duty;
+    //We just set both compare registers, the unused one doesn't matter.
+    OCR1AL = duty;
+    OCR1BL = duty;
 }

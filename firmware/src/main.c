@@ -1,3 +1,4 @@
+#include <avr/wdt.h>
 #include "common.h"
 #include "motor.h"
 #include "uart.h"
@@ -29,22 +30,47 @@ int main(void)
         switch(c)
         {
             case 'l':
+                if(pwm_state)
+                {
+                    puts("PWM is on!");
+                    break;
+                }
                 puts("Motor left");
                 motor_left();
                 break;
             case 'r':
+                if(pwm_state)
+                {
+                    puts("PWM is on!");
+                    break;
+                }
                 puts("Motor right");
                 motor_right();
                 break;
             case 's':
+                if(pwm_state)
+                {
+                    puts("PWM is on!");
+                    break;
+                }
                 puts("Motor stop");
                 motor_stop();
                 break;
             case '1':
+                if(pwm_state)
+                {
+                    puts("PWM is on!");
+                    break;
+                }
                 puts("Toggle M1");
                 M1_toggle();
                 break;
             case '2':
+                if(pwm_state)
+                {
+                    puts("PWM is on!");
+                    break;
+                }
                 puts("Toggle M2");
                 M2_toggle();
                 break;
@@ -84,6 +110,12 @@ int main(void)
                     motor_pwm_set(pwm_duty);
                 }
                 break;
+            case 'x':
+                //software reset: start watchdog and wait...
+                wdt_enable(WDTO_15MS);  //15ms
+                while(1)
+                {
+                }
         }
     }
 }
