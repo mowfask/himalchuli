@@ -79,7 +79,7 @@ int main(void)
                 {
                     puts("PWM: on");
                     pwm_state = 1;
-                    motor_pwm_start(0, pwm_duty);
+                    motor_pwm_start(0, 100);
                 }
                 else
                 {

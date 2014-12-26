@@ -146,7 +146,10 @@ void motor_pwm_stop()
 /*Disable pwm output on OC1A and OC1B pins and set the output to sane values.
  */
 {
-    clearmask(TCCR1A, COM1A1 | COM1A0 | COM1B1 | COM1B0);
+    clearbit(TCCR1A, COM1A1);
+    clearbit(TCCR1A, COM1A0);
+    clearbit(TCCR1A, COM1B1);
+    clearbit(TCCR1A, COM1B0);
     M1_low();
     M2_low();
 }
@@ -170,7 +173,8 @@ void motor_pwm_start(uint8_t direction, uint8_t duty)
      */
     setbit(TCCR1A, WGM10);
     clearbit(TCCR1A, WGM11);
-    clearmask(TCCR1B, WGM12 | WGM13);
+    clearbit(TCCR1B, WGM12);
+    clearbit(TCCR1B, WGM13);
 
     motor_pwm_stop();
     _delay_ms(40);
@@ -180,7 +184,8 @@ void motor_pwm_start(uint8_t direction, uint8_t duty)
     OCR1BL = duty;
 
     //Start the timer/counter by selecting the clock source (prescaler: 1)
-    clearmask(TCCR1B, CS12 | CS11);
+    clearbit(TCCR1B, CS12);
+    clearbit(TCCR1B, CS11);
     setbit(TCCR1B, CS10);
 
     /*For enabling the actual pwm, from the datasheet:
