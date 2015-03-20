@@ -4,29 +4,17 @@
 #include "common.h"
 
 //Pin definitions
-//Upper motor connector high (12V) side
-#define PORT_M1H PORTB
-#define PM1H     PB2
-#define DDR_M1H  DDRB
-#define DDM1H    DDB2
+//Motor connector 1
+#define PORT_M1  PORTB
+#define PM1      PB0
+#define DDR_M1   DDRB
+#define DDM1     DDB0
 
-//Upper motor connector low (GND) side
-#define PORT_M1L PORTD
-#define PM1L     PD7
-#define DDR_M1L  DDRD
-#define DDM1L    DDD7
-
-//Lower motor connector high (12V) side
-#define PORT_M2H PORTB
-#define PM2H     PB1
-#define DDR_M2H  DDRB
-#define DDM2H    DDB1
-
-//Lower motor connector low (GND) side
-#define PORT_M2L PORTB
-#define PM2L     PB0
-#define DDR_M2L  DDRB
-#define DDM2L    DDB0
+//Motor connector 2
+#define PORT_M2  PORTD
+#define PM2      PD7
+#define DDR_M2   DDRD
+#define DDM2     DDD7
 
 
 void motor_init();
@@ -46,18 +34,5 @@ void M2_toggle();
 void motor_left();
 void motor_right();
 void motor_stop();
-
-void motor_pwm_stop();
-/*Disable pwm output on OC1A and OC1B pins and set the output to sane values.
- */
-
- void motor_pwm_start(uint8_t direction, uint8_t duty);
-/*Set up pwm for the given direction (right: 0; left: non-0), with the given
- *duty (min: 0; max:255).
- */
-
-inline void motor_pwm_set(uint8_t duty);
-/*Change the pwm value, assuming motor_pwm_start() has been run before.
- */
 
 #endif
