@@ -1,0 +1,98 @@
+Panel connector on main board
+=============================
+
+top-view
+--------
+ ---X---
+| 1 2 3 |
+| 4 5 6 |
+ -------
+
+connections
+-----------
+1   PB1     manual down
+2   PB6     LED
+3   PB7     LED
+4   PD5     manual up
+5   PD6     manual enable
+6   GND
+
+Pinhead connectors (Atmega marking pointing left, top view)
+===========================================================
+
+Uart
+----
+    left:   RXD
+    right:  TXD
+
+Motor rotation counter
+----------------------
+    left:   signal (pulled up)
+    right:  GND
+
+Motor connector (top to bottom)
+-------------------------------
+1   current sense       amplifier -> PC1
+2   GND
+3   relay 1             PB0
+4   relay 2             PD7
+
+Feeder sensor (top to bottom)
+-----------------------------
+1   VCC
+2   signal              PC2
+3   GND
+
+
+AVR Pin connections
+===================
+PB0         Motor connector relay 1
+PB1         Panel connector 1
+PB2
+PB3         ISP MOSI
+PB4         ISP MISO
+PB5         ISP SCK
+PB6         Panel connector 2
+PB7         Panel connector 3
+PC0 (ADC0)  Second OpAmp Channel
+PC1 (ADC1)  First OpAmp Channel -> Current sense
+PC2 (ADC2)  Feeder sensor
+PC3
+PC4
+PC5
+PC6
+PD0         Uart RXD
+PD1         Uart TXD
+PD2         Motor rotation counter (switch to GND)
+PD3
+PD4
+PD5         Panel connector 4
+PD6         Panel connector 5
+PD7         Motor connector relay 2
+
+
+
+Timing
+======
+-> Do everything in regular intervals
+    -> Read panel input
+    -> Read sensor input (motor rotation counter, motor current and feeder)
+    -> Set motor and panel output accordingly
+-> ADC conversion
+    -> ~150kHz ADC clock
+    -> First conversion after switch on takes 25 ADC cycles (167µs),
+        successive ones take 13 ADC cyles (87µs)
+-> Button switch inputs
+    -> motor rotation counter should work up to 10Hz -> 100ms cycle
+    -> input panel switches should not take longer than 20ms to be registered
+    => 20ms for contact debouncing => 5-10ms timing interval would be okay
+=> Totally feasible to run every 5-10ms, start the ADC, wait for it (167µs)
+    and do everything else afterwards.
+    -> 1Mhz clock -> 5000 to 10000 cycles using an 8-bit counter -> prescaler
+        of 32
+    => 256*32 = 8192 cycles -> 8.192ms interval
+
+Input filter (only on sensors, not on panel input)
+==================================================
+RC filter + Pullup
+    -> R = 1k; C = 1µ -> cutoff frequency 1kHz
