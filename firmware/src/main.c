@@ -2,11 +2,15 @@
 #include "common.h"
 #include "motor.h"
 #include "uart.h"
+#include "sensors.h"
+#include "panel.h"
 
 
 static void init(void) {
     uart_init();
     motor_init();
+    panel_init();
+    sensors_init();
 
     //everything is set up, globally enable interrupts
     //sei();
