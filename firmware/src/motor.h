@@ -35,4 +35,7 @@ void motor_left();
 void motor_right();
 void motor_stop();
 
+#define motor_up    motor_right
+#define motor_down  motor_left
+
 #endif

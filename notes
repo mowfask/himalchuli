@@ -27,7 +27,7 @@ Uart
 
 Motor rotation counter
 ----------------------
-    left:   signal (pulled up)
+    left:   signal      PD2
     right:  GND
 
 Motor connector (top to bottom)
