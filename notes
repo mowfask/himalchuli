@@ -39,7 +39,7 @@ Motor connector (top to bottom)
 
 Feeder sensor (top to bottom)
 -----------------------------
-1   VCC
+1   VCC over PNP        PB2
 2   signal              PC2
 3   GND
 
@@ -48,7 +48,7 @@ AVR Pin connections
 ===================
 PB0         Motor connector relay 1
 PB1         Panel connector 1
-PB2
+PB2         Feeder sensor voltage supply (inverted!)
 PB3         ISP MOSI
 PB4         ISP MISO
 PB5         ISP SCK
@@ -96,3 +96,17 @@ Input filter (only on sensors, not on panel input)
 ==================================================
 RC filter + Pullup
     -> R = 1k; C = 1µ -> cutoff frequency 1kHz
+
+Feeder detection
+================
+
+infrared LED CQY 99
+-------------------
+Forward Voltage:    1.4V typical at 100mA
+Current:            100mA
+VCC:                5V
+-> Series resistor: 2x47R in parallel -> ~150mA
+
+photodiode SFH 203 FA
+---------------------
+simple OpAmp (UA741) circuit for voltage signal in ~ [0V, 4V] range.
