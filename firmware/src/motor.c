@@ -70,7 +70,7 @@ void M2_toggle()
 void motor_left()
 {
     M2_low();
-    _delay_ms(40);
+    //_delay_ms(40);
     M1_high();
     motor_direction = 2;
 }
@@ -78,7 +78,7 @@ void motor_left()
 void motor_right()
 {
     M1_low();
-    _delay_ms(40);
+    //_delay_ms(40);
     M2_high();
     motor_direction = 1;
 }

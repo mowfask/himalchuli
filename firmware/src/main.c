@@ -119,6 +119,7 @@ void process_buttons()
 ISR(TIMER0_OVF_vect)
 {
     static uint8_t ovf_counter;
+    uint8_t feeding_period;     //wether feeding or waiting for feeding
 
     if(ovf_counter++ < 3)   //return 3 out of 4 times, act only every 8ms
     {
@@ -128,6 +129,14 @@ ISR(TIMER0_OVF_vect)
     debounce_buttons();
     next_state();
     process_buttons();
+
+    if(state == STATE_AUTO)
+    {
+        if(feeding_period)
+        {
+
+        }
+    }
 
     ovf_counter = 0;
     return;
