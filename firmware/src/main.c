@@ -5,9 +5,11 @@
 #include "sensors.h"
 #include "panel.h"
 
-#define MODE_AUTO   0x00
-#define MODE_MAN    0x01
-uint8_t mode;               //automatic/manual
+#define STATE_AUTO   0x00
+#define STATE_MAN    0x01
+uint8_t state;               //automatic/manual
+
+int16_t height;             //actual height of door in motor rotations
 
 uint8_t pressed_buttons;    //1 means pressed for longer than ~20ms
 uint8_t released_buttons;   //0 means not pressed within ~20ms
@@ -47,48 +49,69 @@ void debounce_buttons()
     //only where bit == 1, the last 4 times were 1
 }
 
+void next_state()
+{
+    if(testbit(pressed_buttons, 1))
+    {
+        //manual enable pressed
+        state = STATE_MAN;
+    }
+    else if(testbit(released_buttons, 1) == 0)
+    {
+        //manual enable not pressed
+        state = STATE_AUTO;
+    }
+}
+
 void process_buttons()
 {
+    static uint8_t prev_rotation_pressed;
+
     if(testbit(released_buttons, 0) == 0)
     {
         //motor rotation not pressed
+        prev_rotation_pressed = 0;
     }
 
     if(testbit(pressed_buttons, 0))
     {
         //motor rotation pressed
+        if(!prev_rotation_pressed)
+        {
+            switch(motor_get_direction())
+            {
+                case 1:
+                    height++;
+                    break;
+                case 2:
+                    height--;
+                    break;
+            }
+        }
+        prev_rotation_pressed = 1;
     }
 
     //process panel buttons
-    if(testbit(pressed_buttons, 1))
+    if(state == STATE_MAN)
     {
-        //manual enable pressed
-        mode = MODE_MAN;
-        if(testbit(pressed_buttons, 2))
+        uint8_t up_pressed = testbit(pressed_buttons, 2);
+        uint8_t down_pressed = testbit(pressed_buttons, 3);
+        if(up_pressed && down_pressed)
         {
-            //manual up pressed
+            motor_stop();
+            height = 0;
+        }
+        else if(up_pressed)
+        {
             motor_up();
         }
-        else if(testbit(pressed_buttons, 3))
+        else if(down_pressed)
         {
-            //manual down pressed
             motor_down();
         }
-        else if(testbit(released_buttons, 2) == 0 &&
-                testbit(released_buttons, 3) == 0)
-        {
-            //both manual down and manual up released
-            motor_stop();
-        }
-    }
-    else if(testbit(released_buttons, 1))
-    {
-        //manual enable not pressed
-        if(mode == MODE_MAN)
+        else
         {
             motor_stop();
-            mode = MODE_AUTO;
-
         }
     }
 }
@@ -103,8 +126,8 @@ ISR(TIMER0_OVF_vect)
     }
 
     debounce_buttons();
+    next_state();
     process_buttons();
-
 
     ovf_counter = 0;
     return;

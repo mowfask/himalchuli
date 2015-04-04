@@ -6,6 +6,8 @@
 uint8_t M1_state;
 uint8_t M2_state;
 
+uint8_t motor_direction;    //0: stopped, 1: right, 2: left
+
 void motor_init()
 {
     //Motors as outputs
@@ -14,6 +16,7 @@ void motor_init()
 
     M1_state = 0;
     M2_state = 0;
+    motor_direction = 0;
 }
 
 void M1_low()
@@ -69,6 +72,7 @@ void motor_left()
     M2_low();
     _delay_ms(40);
     M1_high();
+    motor_direction = 2;
 }
 
 void motor_right()
@@ -76,10 +80,17 @@ void motor_right()
     M1_low();
     _delay_ms(40);
     M2_high();
+    motor_direction = 1;
 }
 
 void motor_stop()
 {
     M1_low();
     M2_low();
+    motor_direction = 0;
+}
+
+uint8_t motor_get_direction()
+{
+    return(motor_direction);
 }
