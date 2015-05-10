@@ -37,17 +37,17 @@ inline void detection_LED_off()
 
 inline uint8_t manual_enable_pressed()
 {
-    return(testbit(PIN_MEB, PMEB));
+    return(1-testbit(PIN_MEB, PMEB));
 }
 
 inline uint8_t manual_up_pressed()
 {
-    return(testbit(PIN_MUB, PMUB));
+    return(1-testbit(PIN_MUB, PMUB));
 }
 
 inline uint8_t manual_down_pressed()
 {
-    return(testbit(PIN_MDB, PMDB));
+    return(1-testbit(PIN_MDB, PMDB));
 }
 
 

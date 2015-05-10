@@ -23,7 +23,7 @@ void sensors_init()
 
 inline uint8_t motor_rotation_pressed()
 {
-	return(testbit(PIN_MRC, PMRC));
+	return(1-testbit(PIN_MRC, PMRC));
 }
 
 static uint8_t adc_conversion()
