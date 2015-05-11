@@ -2,9 +2,15 @@
 
 void sensors_init()
 {
+	//motor rotation counter
 	clearbit(DDR_MRC, DDMRC);
 	//enable pullup
 	setbit(PORT_MRC, PMRC);
+
+	//distance senseor supply as output
+	setbit(DDR_DSS, DDDSS);
+	//default off (inverted)
+	setbit(PORT_DSS, PDSS);
 
 	//ADC channels as inputs
 	clearbit(DDR_CS, DDCS);
@@ -53,6 +59,18 @@ uint8_t current_sense()
 	return(adc_conversion());
 }
 
+static void distance_supply_on()
+{
+	//inverted by transistor
+	clearbit(PORT_DSS, PDSS);
+}
+
+static void distance_supply_off()
+{
+	//inverted by transistor
+	setbit(PORT_DSS, PDSS);
+}
+
 uint8_t distance_sense()
 {
 	/*Assumes to be called every 8ms. To reduce wear on infrared LED, measure
@@ -64,6 +82,8 @@ uint8_t distance_sense()
 
 	if(callcount == 0)
 	{
+		distance_supply_on();
+		_delay_us(400);	//Rise time for infrared LED
 		//select channel 2 for ADC
 		clearbit(ADMUX, MUX0);
 		setbit(ADMUX, MUX1);
@@ -71,6 +91,7 @@ uint8_t distance_sense()
 		clearbit(ADMUX, MUX3);
 
 		current_distance = adc_conversion();
+		distance_supply_off();
 		callcount = 625;
 	}
 

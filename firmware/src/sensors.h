@@ -24,6 +24,13 @@
 #define DDR_DS      DDRC
 #define DDDS        DDC2
 
+//distance sense supply
+#define PIN_DSS     PINB
+#define PORT_DSS    PORTB
+#define PDSS        PB2
+#define DDR_DSS     DDRB
+#define DDDSS       DDB2
+
 void sensors_init();
 inline uint8_t motor_rotation_pressed();
 
