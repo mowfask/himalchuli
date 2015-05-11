@@ -6,6 +6,10 @@ void sensors_init()
 	//enable pullup
 	setbit(PORT_MRC, PMRC);
 
+	//ADC channels as inputs
+	clearbit(DDR_CS, DDCS);
+	clearbit(DDR_DS, DDDS);
+
 	//set up ADC
 	//AVCC reference voltage
 	setbit(ADMUX, REFS0);
@@ -49,13 +53,27 @@ uint8_t current_sense()
 	return(adc_conversion());
 }
 
-uint8_t feeder_sense()
+uint8_t distance_sense()
 {
-	//select channel 2 for ADC
-	clearbit(ADMUX, MUX0);
-	setbit(ADMUX, MUX1);
-	clearbit(ADMUX, MUX2);
-	clearbit(ADMUX, MUX3);
+	/*Assumes to be called every 8ms. To reduce wear on infrared LED, measure
+	 *only every 5 seconds, so every 625 calls. On all the other calls, return
+	 *old value.
+	 */
+	static uint16_t callcount = 0;
+	static uint8_t current_distance = 0;
 
-	return(adc_conversion());
+	if(callcount == 0)
+	{
+		//select channel 2 for ADC
+		clearbit(ADMUX, MUX0);
+		setbit(ADMUX, MUX1);
+		clearbit(ADMUX, MUX2);
+		clearbit(ADMUX, MUX3);
+
+		current_distance = adc_conversion();
+		callcount = 625;
+	}
+
+	callcount--;
+	return(current_distance);
 }

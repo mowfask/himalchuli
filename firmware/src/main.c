@@ -49,7 +49,6 @@ void debounce_buttons()
             //reset counter
             button_count[i] = 3;
         }
-
     }
 }
 
@@ -109,12 +108,13 @@ void process_buttons()
 ISR(TIMER0_OVF_vect)
 {
     static uint8_t ovf_counter;
-    uint8_t feeding_period;     //whether feeding or waiting for feeding
 
     if(ovf_counter++ < 3)   //return 3 out of 4 times, act only every 8ms
     {
         return;
     }
+    //else
+    ovf_counter = 0;
 
     debounce_buttons();
     next_state();
@@ -122,14 +122,21 @@ ISR(TIMER0_OVF_vect)
 
     if(state == STATE_AUTO)
     {
-        if(feeding_period)
-        {
-
-        }
+        /*If distance is smaller than threshold (calf is there): close door.
+         *If distance is bigger than threshold for 5 seconds: open door.
+         *
+         *Conditions of a problem while opening or closing:
+         *  The rotation button is not pressed for 4 seconds or the current
+         *  exeeds the current threshold for 4 seconds.
+         *In case that happens:
+         *  Stop the motor and wait for 10 seconds, then try again. If the
+         *  problem occurs again, go into error state.
+         *
+         *Furthermore:
+         *  The distance should be measured only every 5 seconds, so the wear
+         *  on the infrared LED is reduced.
+         */
     }
-
-    ovf_counter = 0;
-    return;
 }
 
 void timer_init()

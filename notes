@@ -37,7 +37,7 @@ Motor connector (top to bottom)
 3   relay 1             PB0
 4   relay 2             PD7
 
-Feeder sensor (top to bottom)
+Distance sensor (top to bottom)
 -----------------------------
 1   VCC over PNP        PB2
 2   signal              PC2
@@ -48,7 +48,7 @@ AVR Pin connections
 ===================
 PB0         Motor connector relay 1
 PB1         Panel connector 1
-PB2         Feeder sensor voltage supply (inverted!)
+PB2         Distance sensor voltage supply (inverted!)
 PB3         ISP MOSI
 PB4         ISP MISO
 PB5         ISP SCK
@@ -56,7 +56,7 @@ PB6         Panel connector 2
 PB7         Panel connector 3
 PC0 (ADC0)  Second OpAmp Channel
 PC1 (ADC1)  First OpAmp Channel -> Current sense
-PC2 (ADC2)  Feeder sensor
+PC2 (ADC2)  Distance sensor
 PC3
 PC4
 PC5
@@ -76,7 +76,7 @@ Timing
 ======
 -> Do everything in regular intervals
     -> Read panel input
-    -> Read sensor input (motor rotation counter, motor current and feeder)
+    -> Read sensor input (motor rotation counter, motor current and distance)
     -> Set motor and panel output accordingly
 -> ADC conversion
     -> ~150kHz ADC clock
@@ -97,16 +97,20 @@ Input filter (only on sensors, not on panel input)
 RC filter + Pullup
     -> R = 1k; C = 1µ -> cutoff frequency 1kHz
 
-Feeder detection
-================
-
-infrared LED CQY 99
--------------------
-Forward Voltage:    1.4V typical at 100mA
-Current:            100mA
+Distance sensor (ITR9904)
+=========================
+Infrared LED
+------------
+Forward Voltage:    1.2V...1.3V
+Current:            30mA...50mA
 VCC:                5V
--> Series resistor: 2x47R in parallel -> ~150mA
+-> 100R series Resistor -> ~37mA
 
-photodiode SFH 203 FA
----------------------
-simple OpAmp (UA741) circuit for voltage signal in ~ [0V, 4V] range.
+Light sensor transistor
+-----------------------
+Maximum current:    20mA
+Maximum power:      75mW
+For V_CE > 0.7V:
+    H   = 0.5mW/cm²...2.0mW/cm²
+ -> I_C =   0.5mA  ...  2.7mA
+~3mA at 4.3V -> 1k+470R in series as shunt.

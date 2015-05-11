@@ -17,12 +17,12 @@
 #define DDR_CS      DDRC
 #define DDCS        DDC1
 
-//feeder sense
-#define PIN_FS      PINC
-#define PORT_FS     PORTC
-#define PFS         PC2
-#define DDR_FS      DDRC
-#define DDFS        DDC2
+//distance sense
+#define PIN_DS      PINC
+#define PORT_DS     PORTC
+#define PDS         PC2
+#define DDR_DS      DDRC
+#define DDDS        DDC2
 
 void sensors_init();
 inline uint8_t motor_rotation_pressed();
