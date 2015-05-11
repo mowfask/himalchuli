@@ -90,7 +90,7 @@ uint8_t distance_sense()
         clearbit(ADMUX, MUX2);
         clearbit(ADMUX, MUX3);
 
-        current_distance = adc_conversion();
+        current_distance = 255-adc_conversion();
         distance_supply_off();
         callcount = 625;
     }
