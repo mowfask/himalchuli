@@ -36,11 +36,6 @@
 #define DDR_MDB     DDRB
 #define DDMDB       DDB1
 
-#define PORT_M1  PORTB
-#define PM1      PB0
-#define DDR_M1   DDRB
-#define DDM1     DDB0
-
 
 void panel_init();
 
