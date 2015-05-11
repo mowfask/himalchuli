@@ -105,6 +105,12 @@ Forward Voltage:    1.2V...1.3V
 Current:            30mA...50mA
 VCC:                5V
 -> 100R series Resistor -> ~37mA
+Duty cicle:
+    Turned on every 5 seconds, waits for 400µs and does one adc conversion
+    -> 600µs/5s = .012%
+    Operating life expectancy: 1000hr
+    -> 1000hr/.012% = 8e6hr = 950 years
+    => If 600µs really is enough, turning on every second is okay as well.
 
 Light sensor transistor
 -----------------------
