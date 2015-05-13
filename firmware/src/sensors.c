@@ -74,13 +74,13 @@ static void distance_supply_off()
 uint8_t distance_sense()
 {
     /*Assumes to be called every 8ms. To reduce wear on infrared LED, measure
-     *only every 5 seconds, so every 625 calls. On all the other calls, return
-     *old value.
+     *only every DIST_TIMER_MAX calls. On all the other calls, return old
+     *value.
      */
-    static uint16_t callcount = 0;
+    static uint16_t dist_timer = 0;
     static uint8_t current_distance = 0;
 
-    if(callcount == 0)
+    if(dist_timer == 0)
     {
         distance_supply_on();
         _delay_us(400); //Rise time for infrared LED
@@ -92,9 +92,9 @@ uint8_t distance_sense()
 
         current_distance = 255-adc_conversion();
         distance_supply_off();
-        callcount = 625;
+        dist_timer = DIST_TIMER_MAX;
     }
 
-    callcount--;
+    dist_timer--;
     return(current_distance);
 }

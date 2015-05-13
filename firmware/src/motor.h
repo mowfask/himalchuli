@@ -37,7 +37,11 @@ void motor_stop();
 
 uint8_t motor_get_direction();
 
+//If you switch these, switch those below as well
 #define motor_up    motor_right
 #define motor_down  motor_left
+
+#define MOTOR_UP    1
+#define MOTOR_DOWN  2
 
 #endif

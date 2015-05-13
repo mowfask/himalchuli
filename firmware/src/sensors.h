@@ -31,6 +31,9 @@
 #define DDR_DSS     DDRB
 #define DDDSS       DDB2
 
+#define DIST_TIMER_MAX  625 //measure distance only every 5 seconds (625 ticks
+                            //of 8ms)
+
 void sensors_init();
 inline uint8_t motor_rotation_pressed();
 

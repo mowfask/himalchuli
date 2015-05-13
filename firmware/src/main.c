@@ -5,18 +5,18 @@
 #include "sensors.h"
 #include "panel.h"
 
-#define STATE_AUTO   0x00
-#define STATE_MAN    0x01
+#define STATE_AUTO  0x00
+#define STATE_MAN   0x01
 uint8_t state;          //automatic/manual
 
 int16_t height;         //actual height of door in motor rotations
 
 //Number of buttons and their bit positions
 #define NBR_BUTTONS 4   //number of buttons
-#define BUTTONS_MR 0    //motor rotation
-#define BUTTONS_ME 1    //manual enable
-#define BUTTONS_MU 2    //manual up
-#define BUTTONS_MD 3    //manual down
+#define BUTTONS_MR  0   //motor rotation
+#define BUTTONS_ME  1   //manual enable
+#define BUTTONS_MU  2   //manual up
+#define BUTTONS_MD  3   //manual down
 
 //functions to check button states
 uint8_t (*const button_funcs[NBR_BUTTONS])() = {motor_rotation_pressed,
@@ -37,7 +37,7 @@ void debounce_buttons()
     //state.
     for(i = 0; i < NBR_BUTTONS; ++i)
     {
-        if(button_count[i] != 0)
+        if(button_count[i] > 0)
         {
             button_count[i]--;
         }
@@ -66,13 +66,11 @@ void process_buttons()
         //motor rotation button was pressed (went from 0 to 1)
         switch(motor_get_direction())
         {
-            case 1:
+            case MOTOR_UP:
                 height++;
                 break;
-            case 2:
-                height--;
-                break;
-            default:
+            default:        //If the motor is not running, the winch is
+                height--;   //probably unwinding and the door is closing.
                 break;
         }
     }
@@ -131,10 +129,6 @@ ISR(TIMER0_OVF_vect)
          *In case that happens:
          *  Stop the motor and wait for 10 seconds, then try again. If the
          *  problem occurs again, go into error state.
-         *
-         *Furthermore:
-         *  The distance should be measured only every 5 seconds, so the wear
-         *  on the infrared LED is reduced.
          */
     }
 }
