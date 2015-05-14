@@ -26,6 +26,9 @@ uint8_t (*const button_funcs[NBR_BUTTONS])() = {motor_rotation_pressed,
 
 uint8_t buttons_deb;    //debounced buttons, 1 means pressed
 
+uint16_t timer;             //Timer counting in 8ms steps. This is enough for
+                            //about 8.5 minutes. Declaration in common.h
+
 void debounce_buttons()
 //debounce buttons by changing bits of buttons_deb maximally every 3rd call
 //(about 25ms)
@@ -64,6 +67,7 @@ void process_buttons()
     if(testbit(buttons_deb, BUTTONS_MR) && !prev_rotation)
     {
         //motor rotation button was pressed (went from 0 to 1)
+        motor_reset_timer();    //motor is turning, no problem
         switch(motor_get_direction())
         {
             case MOTOR_UP:
@@ -113,6 +117,8 @@ ISR(TIMER0_OVF_vect)
     }
     //else
     ovf_counter = 0;
+
+    timer++;
 
     debounce_buttons();
     next_state();

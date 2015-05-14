@@ -23,5 +23,7 @@
 #define togglemask(byte, mask) ((byte ^= (mask))
 #define testmask(byte, mask) ((byte) & (mask) == 0 ? 0 : 1) //not elegant, but
                                                             //returns 1 or 0
+extern uint16_t timer;      //Timer counting in 8ms steps. This is enough for
+                            //about 8.5 minutes.
 
 #endif
