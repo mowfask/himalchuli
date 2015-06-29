@@ -24,6 +24,7 @@
 #define STATE_AUTO  0x00
 #define STATE_MAN   0x01
 #define STATE_ERROR 0x02
+
 uint8_t state;          //automatic/manual/error
 
 int16_t height;         //actual height of door in motor rotations
@@ -62,6 +63,7 @@ void debounce_buttons()
         if(button_count[i] > 0)
         {
             button_count[i]--;
+            continue;   //don't reset counter
         }
         else if(testbit(buttons_deb, i) != button_funcs[i]())
         {
@@ -70,14 +72,15 @@ void debounce_buttons()
             togglebit(buttons_deb, i);
             //set the appropriate bit in buttons_deb_diff
             setbit(buttons_deb_diff, i);
-            //reset counter
-            button_count[i] = 3;
+
         }
         else
         {
             //button didn't toggle
             clearbit(buttons_deb_diff, i);
         }
+        //reset counter
+        button_count[i] = 3;
     }
 }
 

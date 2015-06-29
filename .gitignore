@@ -1,2 +1,5 @@
 firmware/bin/
 datasheets/
+*~
+*.swp
+firmware/tags
