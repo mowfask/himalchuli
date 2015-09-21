@@ -34,6 +34,8 @@ $(SIM_PATH): $(SIM_DIR)/*.c $(SIM_DIR)/*.h
 	gcc -o $(SIM_PATH) -lsimavr -lncurses $(SIM_DIR)/*.c \
 	    -DFIRMW_PATH=\"$(FIRMW_PATH)\" -DMMCU=\"$(MMCU)\"
 
+simulator: $(SIM_PATH)
+
 simulate: $(SIM_PATH) $(FIRMW_PATH)
 	$<
 
