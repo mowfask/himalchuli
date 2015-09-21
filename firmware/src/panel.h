@@ -39,13 +39,13 @@
 
 void panel_init();
 
-inline void status_LED_on();
-inline void status_LED_off();
-inline void detection_LED_on();
-inline void detection_LED_off();
+void status_LED_on();
+void status_LED_off();
+void detection_LED_on();
+void detection_LED_off();
 
-inline uint8_t manual_enable_pressed();
-inline uint8_t manual_up_pressed();
-inline uint8_t manual_down_pressed();
+uint8_t manual_enable_pressed();
+uint8_t manual_up_pressed();
+uint8_t manual_down_pressed();
 
 #endif

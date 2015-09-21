@@ -35,7 +35,7 @@
                             //of 8ms)
 
 void sensors_init();
-inline uint8_t motor_rotation_pressed();
+uint8_t motor_rotation_pressed();
 uint8_t current_sense();
 uint8_t distance_sense();
 

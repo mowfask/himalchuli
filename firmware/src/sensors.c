@@ -31,7 +31,7 @@ void sensors_init()
     setbit(ADCSRA, ADEN);
 }
 
-inline uint8_t motor_rotation_pressed()
+uint8_t motor_rotation_pressed()
 {
     return(1-testbit(PIN_MRC, PMRC));
 }

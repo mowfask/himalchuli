@@ -15,37 +15,37 @@ void panel_init()
     setbit(PORT_MDB, PMDB);
 }
 
-inline void status_LED_on()
+void status_LED_on()
 {
     setbit(PORT_SLED, PSLED);
 }
 
-inline void status_LED_off()
+void status_LED_off()
 {
     clearbit(PORT_SLED, PSLED);
 }
 
-inline void detection_LED_on()
+void detection_LED_on()
 {
     setbit(PORT_DLED, PDLED);
 }
 
-inline void detection_LED_off()
+void detection_LED_off()
 {
     clearbit(PORT_DLED, PDLED);
 }
 
-inline uint8_t manual_enable_pressed()
+uint8_t manual_enable_pressed()
 {
     return(1-testbit(PIN_MEB, PMEB));
 }
 
-inline uint8_t manual_up_pressed()
+uint8_t manual_up_pressed()
 {
     return(1-testbit(PIN_MUB, PMUB));
 }
 
-inline uint8_t manual_down_pressed()
+uint8_t manual_down_pressed()
 {
     return(1-testbit(PIN_MDB, PMDB));
 }
