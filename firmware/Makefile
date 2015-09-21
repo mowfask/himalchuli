@@ -1,5 +1,5 @@
 CC = avr-gcc
-CC_ARGS = -Wall -O1 -g
+CC_ARGS = -Wall -O1 -g -flto
 SRC_DIR = src
 BUILD_DIR = bin
 TEST_DIR = testing
