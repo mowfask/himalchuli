@@ -12,7 +12,7 @@ MMCU = atmega8
 
 $(BUILD_DIR)/main.elf: $(SRC_DIR)/*.h $(SRC_DIR)/*.c
 	@test -d $(BUILD_DIR) || (mkdir $(BUILD_DIR) && echo -e \
-	"Created $(BUILD_DIR)/ directory")
+	    "Created $(BUILD_DIR)/ directory")
 	@#it would be nice to have avr-gcc warn about declared/defined
 	@#functions that aren't used anywhere. Seems like that's hard to
 	@#achieve...
@@ -20,14 +20,14 @@ $(BUILD_DIR)/main.elf: $(SRC_DIR)/*.h $(SRC_DIR)/*.c
 
 burn: $(BUILD_DIR)/main.elf
 	avrdude -p m8 -c $(PG_TYPE) -P $(PG_PORT) \
-	-U flash:w:$(BUILD_DIR)/main.elf
+	    -U flash:w:$(BUILD_DIR)/main.elf
 
 check:
 	avrdude -p m8 -c $(PG_TYPE) -P $(PG_PORT)
 
 $(BUILD_DIR)/testing: $(TEST_DIR)/*.c
 	gcc -o $(BUILD_DIR)/testing -lsimavr $(TEST_DIR)/*.c \
-	-DFIRMW_PATH=\"$(BUILD_DIR)/main.elf\" -DMMCU=\"$(MMCU)\"
+	    -DFIRMW_PATH=\"$(BUILD_DIR)/main.elf\" -DMMCU=\"$(MMCU)\"
 
 run_tests: $(BUILD_DIR)/testing $(BUILD_DIR)/main.elf
 	$<
