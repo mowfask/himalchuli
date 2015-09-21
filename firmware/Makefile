@@ -1,5 +1,5 @@
 CC = avr-gcc
-CC_ARGS = -Wall -O1
+CC_ARGS = -Wall -O1 -g
 SRC_DIR = src
 BUILD_DIR = bin
 TEST_DIR = testing
@@ -25,5 +25,12 @@ burn: $(BUILD_DIR)/main.elf
 check:
 	avrdude -p m8 -c $(PG_TYPE) -P $(PG_PORT)
 
-tests: $(TEST_DIR)/*.c
-	gcc -o $(BUILD_DIR)/testing -lsimavr $(TEST_DIR)/*.c
+$(BUILD_DIR)/testing: $(TEST_DIR)/*.c
+	gcc -o $(BUILD_DIR)/testing -lsimavr $(TEST_DIR)/*.c \
+	-DFIRMW_PATH=\"$(BUILD_DIR)/main.elf\" -DMMCU=\"$(MMCU)\"
+
+run_tests: $(BUILD_DIR)/testing $(BUILD_DIR)/main.elf
+	$<
+
+clean:
+	rm -rf $(BUILD_DIR)/*
