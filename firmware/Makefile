@@ -30,8 +30,8 @@ burn: $(FIRMW_PATH)
 check:
 	avrdude -p m8 -c $(PG_TYPE) -P $(PG_PORT)
 
-$(SIM_PATH): $(SIM_DIR)/*.c
-	gcc -o $(SIM_PATH) -lsimavr $(SIM_DIR)/*.c \
+$(SIM_PATH): $(SIM_DIR)/*.c $(SIM_DIR)/*.h
+	gcc -o $(SIM_PATH) -lsimavr -lncurses $(SIM_DIR)/*.c \
 	    -DFIRMW_PATH=\"$(FIRMW_PATH)\" -DMMCU=\"$(MMCU)\"
 
 simulate: $(SIM_PATH) $(FIRMW_PATH)
