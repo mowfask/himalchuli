@@ -2,6 +2,7 @@ CC = avr-gcc
 CC_ARGS = -Wall -O1
 SRC_DIR = src
 BUILD_DIR = bin
+TEST_DIR = testing
 #Programmer device type
 PG_TYPE = stk500
 #Programmer serial device
@@ -24,3 +25,5 @@ burn: $(BUILD_DIR)/main.elf
 check:
 	avrdude -p m8 -c $(PG_TYPE) -P $(PG_PORT)
 
+tests: $(TEST_DIR)/*.c
+	gcc -o $(BUILD_DIR)/testing -lsimavr $(TEST_DIR)/*.c
