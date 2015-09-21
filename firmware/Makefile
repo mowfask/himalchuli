@@ -2,7 +2,7 @@ CC = avr-gcc
 CC_ARGS = -Wall -O1 -g -flto
 SRC_DIR = src
 BUILD_DIR = bin
-TEST_DIR = testing
+SIM_DIR = sim_src
 #Programmer device type
 PG_TYPE = stk500
 #Programmer serial device
@@ -10,7 +10,12 @@ PG_PORT = /dev/ttyUSB0
 #AVR mmcu
 MMCU = atmega8
 
-$(BUILD_DIR)/main.elf: $(SRC_DIR)/*.h $(SRC_DIR)/*.c
+#firmware path
+FIRMW_PATH = $(BUILD_DIR)/firmware.elf
+#simulation path
+SIM_PATH = $(BUILD_DIR)/simulation
+
+$(FIRMW_PATH): $(SRC_DIR)/*.h $(SRC_DIR)/*.c
 	@test -d $(BUILD_DIR) || (mkdir $(BUILD_DIR) && echo -e \
 	    "Created $(BUILD_DIR)/ directory")
 	@#it would be nice to have avr-gcc warn about declared/defined
@@ -18,18 +23,18 @@ $(BUILD_DIR)/main.elf: $(SRC_DIR)/*.h $(SRC_DIR)/*.c
 	@#achieve...
 	$(CC) $(CC_ARGS) -mmcu=$(MMCU) -o $@ $(SRC_DIR)/*.c
 
-burn: $(BUILD_DIR)/main.elf
+burn: $(FIRMW_PATH)
 	avrdude -p m8 -c $(PG_TYPE) -P $(PG_PORT) \
-	    -U flash:w:$(BUILD_DIR)/main.elf
+	    -U flash:w:$(FIRMW_PATH)
 
 check:
 	avrdude -p m8 -c $(PG_TYPE) -P $(PG_PORT)
 
-$(BUILD_DIR)/testing: $(TEST_DIR)/*.c
-	gcc -o $(BUILD_DIR)/testing -lsimavr $(TEST_DIR)/*.c \
-	    -DFIRMW_PATH=\"$(BUILD_DIR)/main.elf\" -DMMCU=\"$(MMCU)\"
+$(SIM_PATH): $(SIM_DIR)/*.c
+	gcc -o $(SIM_PATH) -lsimavr $(SIM_DIR)/*.c \
+	    -DFIRMW_PATH=\"$(FIRMW_PATH)\" -DMMCU=\"$(MMCU)\"
 
-run_tests: $(BUILD_DIR)/testing $(BUILD_DIR)/main.elf
+simulate: $(SIM_PATH) $(FIRMW_PATH)
 	$<
 
 clean:
