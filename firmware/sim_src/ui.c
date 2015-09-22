@@ -8,6 +8,11 @@ pthread_mutex_t input_mutex;
 ui_outputs output_state;
 pthread_mutex_t output_mutex;
 
+pthread_t ui_thread;
+//The UI thread will try to lock this mutex every now and then. If it
+//succeeds, it shall terminate.
+pthread_mutex_t ui_thread_lock;
+
 void ui_setoutp(ui_outputs outp)
 {
     pthread_mutex_lock(&output_mutex);
@@ -32,8 +37,7 @@ ui_inputs ui_getinp(void)
     return(result);
 }
 
-
-static void ui_update(void)
+void ui_update(void)
 {
     const char motor_states[][6] = {"off  ", "left ", "right"};
     const char led_states[][4]   = {"off", "on "};
@@ -115,6 +119,22 @@ static void print_template(void)
     ui_update();
 }
 
+void *ui_thread_func(void *arg)
+{
+    char inp;
+
+    while(1)
+    {
+        inp = getch();
+
+        if(pthread_mutex_trylock(&ui_thread_lock) == 0)
+        {
+            return NULL;
+        }
+    }
+
+}
+
 void ui_init(void)
 {
     initscr();
@@ -122,18 +142,26 @@ void ui_init(void)
     keypad(stdscr, TRUE);
     noecho();
     print_template();
+    timeout(20);
 
     pthread_mutex_init(&input_mutex, NULL);
     pthread_mutex_init(&output_mutex, NULL);
+    pthread_mutex_init(&ui_thread_lock, NULL);
 
-    getch();
+    pthread_mutex_lock(&ui_thread_lock);
+    pthread_create(&ui_thread, NULL, ui_thread_func, NULL);
 }
 
 void ui_deinit(void)
 {
+    pthread_mutex_unlock(&ui_thread_lock);
+    pthread_join(ui_thread, NULL);
+
+    timeout(-1);
     endwin();
 
     pthread_mutex_destroy(&input_mutex);
     pthread_mutex_destroy(&output_mutex);
+    pthread_mutex_destroy(&ui_thread_lock);
 }
 

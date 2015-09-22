@@ -31,7 +31,7 @@ check:
 	avrdude -p m8 -c $(PG_TYPE) -P $(PG_PORT)
 
 $(SIM_PATH): $(SIM_DIR)/*.c $(SIM_DIR)/*.h
-	gcc -o $(SIM_PATH) -lsimavr -lncurses $(SIM_DIR)/*.c \
+	gcc -o $(SIM_PATH) -lsimavr -lncurses -lpthread $(SIM_DIR)/*.c \
 	    -DFIRMW_PATH=\"$(FIRMW_PATH)\" -DMMCU=\"$(MMCU)\"
 
 simulator: $(SIM_PATH)

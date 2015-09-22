@@ -24,6 +24,7 @@ void ui_init(void);
 void ui_deinit(void);
 void ui_setoutp(ui_outputs);
 ui_inputs ui_getinp(void);
+void ui_update(void);
 
 #endif
 
