@@ -1,5 +1,6 @@
 #include <ncurses.h>
 #include <pthread.h>
+#include <stdlib.h>
 #include "ui.h"
 
 ui_inputs input_state;
@@ -13,35 +14,11 @@ pthread_t ui_thread;
 //succeeds, it shall terminate.
 pthread_mutex_t ui_thread_lock;
 
-void ui_setoutp(ui_outputs outp)
-{
-    pthread_mutex_lock(&output_mutex);
-    output_state = outp;
-    pthread_mutex_unlock(&output_mutex);
-}
-
-static void ui_setinp(ui_inputs inp)
-{
-    pthread_mutex_lock(&input_mutex);
-    input_state = inp;
-    pthread_mutex_unlock(&input_mutex);
-}
-
-ui_inputs ui_getinp(void)
-{
-    ui_inputs result;
-    pthread_mutex_lock(&input_mutex);
-    result = input_state;
-    pthread_mutex_unlock(&input_mutex);
-
-    return(result);
-}
-
-void ui_update(void)
+static void ui_update(void)
 {
     const char motor_states[][6] = {"off  ", "left ", "right"};
     const char led_states[][4]   = {"off", "on "};
-    const char btn_states[][9]   = {"released", "pressed"};
+    const char btn_states[][9]   = {"released", "pressed "};
     ui_outputs outp;
     ui_inputs inp;
 
@@ -66,6 +43,32 @@ void ui_update(void)
 
     mvaddch(23,0,'>');
     refresh();
+}
+
+void ui_setoutp(ui_outputs outp)
+{
+    pthread_mutex_lock(&output_mutex);
+    output_state = outp;
+    pthread_mutex_unlock(&output_mutex);
+    ui_update();
+}
+
+static void ui_setinp(ui_inputs inp)
+{
+    pthread_mutex_lock(&input_mutex);
+    input_state = inp;
+    pthread_mutex_unlock(&input_mutex);
+    ui_update();
+}
+
+ui_inputs ui_getinp(void)
+{
+    ui_inputs result;
+    pthread_mutex_lock(&input_mutex);
+    result = input_state;
+    pthread_mutex_unlock(&input_mutex);
+
+    return(result);
 }
 
 static void print_template(void)
@@ -111,28 +114,95 @@ static void print_template(void)
     mvprintw(20, 11, "%s", "UP   : Manual up");
     mvprintw(21, 11, "%s", "DOWN : Manual down");
     mvprintw(19, 35, "%s", "r : Motor rotation");
-    mvprintw(20, 35, "%s", "q : Current+");
-    mvprintw(21, 35, "%s", "a : Current-");
-    mvprintw(22, 35, "%s", "w : Distance+");
-    mvprintw(23, 35, "%s", "s : Distance-");
+    mvprintw(20, 35, "%s", "i : Current+");
+    mvprintw(21, 35, "%s", "k : Current-");
+    mvprintw(22, 35, "%s", "o : Distance+");
+    mvprintw(23, 35, "%s", "l : Distance-");
+    mvprintw(19, 59, "%s", "q : Quit");
 
     ui_update();
 }
 
+void ui_handle_inp(int inp)
+{
+    ui_inputs inps;
+    inps = ui_getinp();
+
+    switch(inp)
+    {
+        case 'e':
+            inps.manual_enable = 1-inps.manual_enable;
+            break;
+        case KEY_UP:
+            inps.manual_up = 1-inps.manual_up;
+            break;
+        case KEY_DOWN:
+            inps.manual_down = 1-inps.manual_down;
+            break;
+        case 'r':
+            inps.motor_rot = 1-inps.motor_rot;
+            break;
+        case 'i':
+            if(inps.current <= 245)
+            {
+                inps.current += 10;
+            }
+            else
+            {
+                inps.current = 255;
+            }
+            break;
+        case 'k':
+            if(inps.current >= 10)
+            {
+                inps.current -= 10;
+            }
+            else
+            {
+                inps.current = 0;
+            }
+            break;
+        case 'o':
+            if(inps.distance <= 245)
+            {
+                inps.distance += 10;
+            }
+            else
+            {
+                inps.distance = 255;
+            }
+            break;
+        case 'l':
+            if(inps.distance >= 10)
+            {
+                inps.distance -= 10;
+            }
+            else
+            {
+                inps.distance = 0;
+            }
+            break;
+        case 'q':
+            endwin();
+            exit(0);
+    }
+    ui_setinp(inps);
+}
+
 void *ui_thread_func(void *arg)
 {
-    char inp;
+    int inp;
 
     while(1)
     {
         inp = getch();
+        ui_handle_inp(inp);
 
         if(pthread_mutex_trylock(&ui_thread_lock) == 0)
         {
             return NULL;
         }
     }
-
 }
 
 void ui_init(void)

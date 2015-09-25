@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <simavr/sim_avr.h>
 #include <simavr/avr_ioport.h>
 #include <simavr/sim_elf.h>
@@ -19,6 +20,7 @@ int main(int argc, char *argv[])
     elf_firmware_t f;
 
     ui_init();
+    sleep(200);  //ui thread will terminate after 20s
     ui_deinit();
 
     elf_read_firmware(FIRMW_PATH, &f);
