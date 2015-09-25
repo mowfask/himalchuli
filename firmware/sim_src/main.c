@@ -19,7 +19,6 @@
  */
 
 #include <stdio.h>
-#include <unistd.h>
 #include <simavr/avr_ioport.h>
 #include <simavr/sim_elf.h>
 
@@ -38,15 +37,34 @@ avr_t *avr = NULL;
 int main(int argc, char *argv[])
 {
     elf_firmware_t f;
-
-    ui_init();
-    sleep(200);  //ui thread will terminate after 20s
-    ui_deinit();
+    int cpu_state = cpu_Running;
 
     elf_read_firmware(FIRMW_PATH, &f);
     avr = avr_make_mcu_by_name(MMCU);
     avr_init(avr);
     avr_load_firmware(avr, &f);
+
+    ui_init();
+
+    while(cpu_state != cpu_Done && cpu_state != cpu_Crashed)
+    {
+        cpu_state = avr_run(avr);
+    }
+
+    ui_deinit();
+
+    switch(cpu_state)
+    {
+        case cpu_Done:
+            printf("CPU state: Done.\n");
+            break;
+        case cpu_Crashed:
+            printf("CPU state: Crashed.\n");
+            break;
+        default:
+            printf("CPU state: Unknown.\n");
+    }
+
 
     return 0;
 }
