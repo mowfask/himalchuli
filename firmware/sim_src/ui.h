@@ -2,6 +2,7 @@
 #define UI_H
 
 #include "common.h"
+#include "inputs.h"     //for button_tp
 
 typedef struct ui_outputs
 {

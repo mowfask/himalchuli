@@ -132,15 +132,19 @@ void ui_handle_inp(int inp)
     {
         case 'e':
             inps.manual_enable = 1-inps.manual_enable;
+            btn_handle(btn_manual_enable, inps.manual_enable);
             break;
         case KEY_UP:
             inps.manual_up = 1-inps.manual_up;
+            btn_handle(btn_manual_up, inps.manual_up);
             break;
         case KEY_DOWN:
             inps.manual_down = 1-inps.manual_down;
+            btn_handle(btn_manual_down, inps.manual_down);
             break;
         case 'r':
             inps.motor_rot = 1-inps.motor_rot;
+            btn_handle(btn_motor_rot, inps.motor_rot);
             break;
         case 'i':
             if(inps.current <= 245)

@@ -2,7 +2,9 @@
 #define COMMON_H
 
 #include <inttypes.h>
-typedef enum {btn_released=0, btn_pressed} button_tp;
+#include <simavr/sim_avr.h>
+
+extern avr_t *avr;  //declared in main.c
 
 #endif
 

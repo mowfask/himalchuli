@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <unistd.h>
-#include <simavr/sim_avr.h>
 #include <simavr/avr_ioport.h>
 #include <simavr/sim_elf.h>
 
+#include "common.h"
 #include "ui.h"
 
 #ifndef FIRMW_PATH
